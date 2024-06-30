@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { getUser, createUser, updateUser, deleteUser } from '../services/UserService';
+import { getUser, createUser, updateUser, deleteUser } from '../services/http/UserHttpService';
 
 interface User {
   id: string;
