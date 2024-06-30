@@ -3,21 +3,24 @@ import {IgcPageTitle, IgcPageView} from "../../components/styled/StyledComponent
 import {userStore} from "../../stores/UserStore";
 import {Button} from "react-native";
 import {getAllTest} from "../../services/http/TestHttpService";
+import {NavigationName} from "../../constants/NavEnum";
 
-const onTestPress = async () => {
+const HomePage: React.FC<{ navigation: any }> = ({navigation}) => {
+
+  const onTestPress = async () => {
     getAllTest()
-        .then((resp) => {
-            console.log('TEST SUCCESS', resp);
-        })
-        .catch((resp) => {
-            console.log('TEST CATCH', resp);
-        })
-        .finally(() => {
-           console.log('TEST FINALLY');
-        });
-}
+      .then((resp) => {
+        console.log('TEST SUCCESS', resp);
+      })
+      .catch((resp) => {
+        console.log('TEST CATCH', resp);
+        navigation.navigate(NavigationName.Login)
+      })
+      .finally(() => {
+        console.log('TEST FINALLY');
+      });
+  }
 
-const HomePage: React.FC<{ navigation: any }> = () => {
     return (
         <IgcPageView>
             <IgcPageTitle>HOME PAGE</IgcPageTitle>
