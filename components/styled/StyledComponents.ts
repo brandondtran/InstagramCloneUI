@@ -2,12 +2,10 @@
 import styled from "styled-components/native";
 
 // General
-export const IgcLink = styled.TouchableOpacity`
+
+export const IgcLinkText = styled.Text`
     color: blue;
-    font-weight: bold;
-    font-family: sans-serif;
-    font-size: 13px;
-`;
+`
 
 // Page
 export const IgcPageView = styled.View`

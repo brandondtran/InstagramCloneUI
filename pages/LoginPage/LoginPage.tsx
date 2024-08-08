@@ -1,15 +1,22 @@
 import React, {useState} from 'react';
-import {Button, Text, View} from 'react-native';
-import {IgcFormView, IgcLink, IgcPageTitle, IgcPageView, IgcTextInput} from "../../components/styled/StyledComponents";
+import {Button, Text, TouchableOpacity, View} from 'react-native';
+import {
+  IgcFormView,
+  IgcLinkText,
+  IgcPageTitle,
+  IgcPageView,
+  IgcTextInput
+} from "../../components/styled/StyledComponents";
 import {NavigationName} from "../../constants/NavEnum";
+import authStore from "../../stores/AuthStore";
 
 const LoginPage: React.FC<{ navigation: any }> = ({navigation}) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  const handleLogin = () => {
-    console.log('Username:', username);
-    console.log('Password:', password);
+  const handleLogin = async () => {
+    await authStore.login();
+    // await authStore.loginWithPassword(username, password);
   };
 
   return (
@@ -30,12 +37,13 @@ const LoginPage: React.FC<{ navigation: any }> = ({navigation}) => {
         <Button title="Login" onPress={handleLogin}/>
         <View style={{flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'center'}}>
           <Text>Don't have an account?</Text>
-          <IgcLink onPress={() => navigation.navigate(NavigationName.SignUp)}>Sign Up</IgcLink>
+          <TouchableOpacity onPress={() => navigation.navigate(NavigationName.SignUp)}>
+            <IgcLinkText>Sign Up</IgcLinkText>
+          </TouchableOpacity>
         </View>
       </IgcFormView>
     </IgcPageView>
   );
 };
-
 
 export default LoginPage;

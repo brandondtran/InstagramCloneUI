@@ -1,4 +1,3 @@
-// src/authService.ts
 import { UserManager, WebStorageStateStore, User } from "oidc-client-ts";
 import configStore from "../stores/ConfigStore"
 
@@ -32,6 +31,28 @@ class AuthStore {
         return this.userManager.signinRedirect();
     }
 
+    async loginWithPassword(username: string, password: string): Promise<void> {
+        try {
+            const params = {
+                grant_type: "password",
+                scope: "openid profile email", // Adjust scopes as needed
+                username: username,
+                password: password
+            };
+
+            const response = await this.userManager.signinSilent({ extraQueryParams: params });
+
+            if (response) {
+                console.log('login successful', response);
+                this.navigateToScreen();
+            } else {
+                console.error("Login with password failed");
+            }
+        } catch (error) {
+            console.error("Error during login with password", error);
+        }
+    }
+
     handleCallback(): Promise<User> {
         return this.userManager.signinRedirectCallback();
     }
@@ -45,5 +66,5 @@ class AuthStore {
     }
 }
 
-const authService = new AuthStore();
-export default authService;
+const authStore = new AuthStore();
+export default authStore;

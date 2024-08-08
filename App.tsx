@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import LoginPage from './pages/LoginPage/LoginPage';
@@ -8,42 +9,54 @@ import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import {NavigationName} from "./constants/NavEnum";
 import HomePage from "./pages/HomePage/HomePage";
 import {getAllTest} from "./services/http/TestHttpService";
+import * as SplashScreen from 'expo-splash-screen';
+import {View} from "react-native";
 
 const Stack = createStackNavigator();
 
 let initialRoute = NavigationName.Home;
 
-const handleAppStateChange = async () => {
-    await getAllTest()
-      .then((resp) => {
-        console.log('TEST SUCCESS', resp);
-        initialRoute = NavigationName.Home;
-      })
-      .catch((resp) => {
-        console.log('TEST CATCH', resp);
-        initialRoute = NavigationName.Login;
-      })
-      .finally(() => {
-        console.log('TEST FINALLY');
-      });
-};
+function ActivityIndicator(props: { size: string, color: string }) {
+  return null;
+}
 
 const App: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
 
-  // useEffect(() => {
-  //   console.log('useEffect');
-  //
-  //   const sub = AppState.addEventListener('change', handleAppStateChange);
-  //
-  //   // Clean up the event listener when the component unmounts
-  //   return () => {
-  //     sub.remove();
-  //   };
-  // }, []);
+  useEffect(() => {
+    const prepareApp = async (): Promise<void> => {
+      try {
+        // Prevent splash screen from auto-hiding
+        await SplashScreen.preventAutoHideAsync();
+        await getAllTest()
+          .then((resp) => {
+            console.log('TEST SUCCESS', resp);
+            initialRoute = NavigationName.Home;
+          })
+          .catch((resp) => {
+            // TODO: 401 re-route to login. Else, display an error toast.
+            console.log('TEST CATCH', resp);
+            initialRoute = NavigationName.Login;
+          });
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Hide splash screen and set loading to false
+        await SplashScreen.hideAsync();
+        setIsLoading(false);
+      }
+    };
 
-  handleAppStateChange();
+    prepareApp();
+  }, []);
 
-  console.log('after')
+  if (isLoading) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" color="#0000ff"/>
+      </View>
+    );
+  }
 
   return (
     <ThemeProvider theme={theme}>
